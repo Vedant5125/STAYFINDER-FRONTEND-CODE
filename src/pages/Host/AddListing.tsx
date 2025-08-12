@@ -4,11 +4,13 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { PhotoIcon, 
+  LightBulbIcon,
   // XMarkIcon 
 } from '@heroicons/react/24/outline';
 import api from '../../utils/api';
 import toast from 'react-hot-toast';
 import LoadingSpinner from '../../components/Common/LoadingSpinner';
+import DescriptionGeneratorModal from '../../components/Modals/DescriptionGeneratorModal.tsx';
 
 const addListingSchema = z.object({
   title: z.string().min(1, 'Title is required'),
@@ -30,6 +32,11 @@ const AddListing: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
   const [supportImagePreviews, setSupportImagePreviews] = useState<string[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
 
   const {
     register,
@@ -37,10 +44,42 @@ const AddListing: React.FC = () => {
     formState: { errors },
     // setError,
     watch,
+    setValue
   } = useForm<AddListingFormData>({
     resolver: zodResolver(addListingSchema),
   });
 
+   const handleGenerateDescription = async (attributes: string) => {
+        setIsGenerating(true);
+        handleCloseModal();
+        try {
+            // Get current form values from watch()
+            const currentFormData = watch();
+            const requestBody = {
+                title: currentFormData.title,
+                location: {
+                    country: currentFormData.country,
+                    city: currentFormData.city,
+                    address: currentFormData.address,
+                },
+                type: currentFormData.type,
+                guest: currentFormData.guest,
+                attributes,
+            };
+
+            const response = await api.post('/host/generateDescription', requestBody);
+            
+            // Use setValue to update the form's description field
+            setValue('description', response.data.data.description, { shouldValidate: true });
+            toast.success('Description generated successfully!');
+        } catch (error) {
+            console.error('Error generating description:', error);
+            toast.error('Failed to generate description. Please try again.');
+        } finally {
+            setIsGenerating(false);
+        }
+    };
+    
   const thumbnailFiles = watch('thumbnail');
   const supportImgFiles = watch('supportImg');
 
@@ -134,7 +173,7 @@ if (data.supportImg && data.supportImg.length > 0) {
                 )}
               </div>
 
-              <div>
+        {/*   <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Description
                 </label>
@@ -147,7 +186,37 @@ if (data.supportImg && data.supportImg.length > 0) {
                 {errors.description && (
                   <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
                 )}
+              </div> */}
+
+               <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              <div className="mt-1 relative">
+                <textarea
+                  {...register('description')}
+                  rows={4}
+                  className="input-field pr-12"
+                  placeholder="Describe your property in detail"
+                />
+                <button
+                  type="button"
+                  onClick={handleOpenModal}
+                  disabled={isGenerating}
+                  className="absolute top-2 right-2 p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-400"
+                  title="Auto-generate description"
+                >
+                  {isGenerating ? (
+                    <LoadingSpinner size="sm" />
+                  ) : (
+                    <LightBulbIcon className="h-5 w-5" />
+                  )}
+                </button>
               </div>
+              {errors.description && (
+                <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+              )}
+            </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -320,6 +389,12 @@ if (data.supportImg && data.supportImg.length > 0) {
                 )}
               </div>
             </div>
+            <DescriptionGeneratorModal
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            onGenerate={handleGenerateDescription}
+            isLoading={isGenerating}
+            />
 
             {errors.root && (
               <div className="bg-red-50 border border-red-200 rounded-md p-3">
