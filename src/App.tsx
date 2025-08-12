@@ -14,6 +14,8 @@ import Wishlist from './pages/Wishlist';
 import HostListings from './pages/Host/HostListings';
 import AddListing from './pages/Host/AddListing';
 import BookingsPage from './pages/BookingPage'; 
+import UpdateProfilePage from './pages/UpdateProfilePage';
+import EditListingPage from './pages/EditListingPage';
 
 function App() {
   return (
@@ -26,6 +28,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/listing/:id" element={<ListingDetail />} />
             <Route path="/bookings" element={<BookingsPage />} />
+            <Route path="/profile" element={<UpdateProfilePage />} />
             {/* Protected Routes for Users */}
             <Route
               path="/wishlist"
@@ -43,6 +46,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="host">
                   <HostListings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/host/edit-listing/:id"
+              element={
+                <ProtectedRoute requiredRole="host">
+                  <EditListingPage />
                 </ProtectedRoute>
               }
             />

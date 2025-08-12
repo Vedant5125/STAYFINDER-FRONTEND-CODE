@@ -10,6 +10,7 @@ interface AuthContextType {
   register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
   updateUser: (user: User) => void;
+  setUser: (user: User | null) => void;
 }
 
 interface RegisterData {
@@ -21,6 +22,7 @@ interface RegisterData {
   profile: File;
 }
 
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -30,6 +32,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     checkAuthStatus();
   }, []);
+
+
 
 const checkAuthStatus = async () => {
     try {
@@ -145,6 +149,7 @@ const register = async (data: RegisterData) => {
     register,
     logout,
     updateUser,
+    setUser
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
