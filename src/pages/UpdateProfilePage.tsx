@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/useAuth';
 import api from '../utils/api';
 import { toast } from 'react-toastify';
-import { CameraIcon, UserCircleIcon, KeyIcon } from '@heroicons/react/24/outline';
+import { CameraIcon, UserIcon, KeyIcon, } from '@heroicons/react/24/outline';
 
 const UpdateProfilePage: React.FC = () => {
     const { user, setUser } = useAuth();
@@ -21,6 +21,7 @@ const UpdateProfilePage: React.FC = () => {
 
     const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
     const [isProfileImageUpdating, setIsProfileImageUpdating] = useState(false);
+    const [isImageError, setIsImageError] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -114,11 +115,16 @@ const UpdateProfilePage: React.FC = () => {
                 
                 {/* Profile Image Section */}
                 <div className="bg-white rounded-lg shadow-md p-6 mb-8 flex flex-col items-center">
-                    <img
-                        src={user?.profile || 'https://via.placeholder.com/150'}
-                        alt="User Profile"
+                    {(user?.profile && !isImageError) ? (
+                    <img 
+                        src={user.profile} 
+                        alt="User Profile" 
                         className="h-32 w-32 rounded-full object-cover mb-4 ring-4 ring-primary-500 ring-offset-2"
+                        onError={() => setIsImageError(true)} // This is the key part!
                     />
+                    ) : (
+                    <UserIcon className="h-32 w-32 rounded-full object-cover mb-4 ring-4 ring-primary-500 ring-offset-2" /> // Renders if there's no profile or the image failed to load
+                    )}
                     <h3 className="text-2xl font-bold text-gray-900">{user?.fullname}</h3>
                     <p className="text-gray-600 mt-1">{user?.email}</p>
 
@@ -147,7 +153,7 @@ const UpdateProfilePage: React.FC = () => {
                 {/* Personal Details Section */}
                 <div className="bg-white rounded-lg shadow-md p-6 mb-8">
                     <div className="flex items-center mb-4">
-                        <UserCircleIcon className="h-6 w-6 text-primary-600 mr-2" />
+                        <UserIcon className="h-6 w-6 text-primary-600 mr-2" />
                         <h3 className="text-xl font-semibold text-gray-900">Personal Details</h3>
                     </div>
                     <form onSubmit={handleUpdateDetails} className="space-y-4">

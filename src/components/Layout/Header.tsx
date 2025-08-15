@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/useAuth.tsx';
 import { 
@@ -15,6 +15,11 @@ const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isImageError, setIsImageError] = useState(false); // New state variable
+
+  useEffect(() => {
+    setIsImageError(false);
+  }, [user]);
 
   const handleLogout = async () => {
     await logout();
@@ -79,11 +84,16 @@ const Header: React.FC = () => {
 
                 <div className="flex items-center space-x-4">
                   <Link to="/profile" className="flex items-center space-x-2">
-                    <img 
-                      src={user.profile} 
-                      alt={user.fullname}
-                      className="h-8 w-8 rounded-full object-cover"
-                    />
+                    {(user.profile && !isImageError ) ? (
+                      <img 
+                        src={user.profile} 
+                        alt={user.fullname}
+                        className="h-8 w-8 rounded-full object-cover"
+                        onError={() => setIsImageError(true)} // Set state to true on image load error
+                      />
+                    ) : (
+                      <UserIcon className="h-8 w-8 rounded-full text-gray-500 bg-gray-200 p-1" />
+                    )}
                     <span className="text-gray-700">{user.fullname}</span>
                   </Link>
                   <button
@@ -171,14 +181,17 @@ const Header: React.FC = () => {
                       </Link>
                     </>
                   )}
-
-                  <Link 
-                    to="/profile" 
-                    className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <UserIcon className="h-5 w-5" />
-                    <span>Profile</span>
+                   <Link to="/profile" className="flex items-center space-x-2">
+                    {user.profile ? (
+                      <img
+                        src={user.profile}
+                        alt={user.fullname}
+                        className="h-8 w-8 rounded-full object-cover"
+                      />
+                    ) : (
+                      <UserIcon className="h-8 w-8 rounded-full text-gray-400 bg-gray-100 p-1" />
+                    )}
+                    <span className="text-gray-700">{user.fullname}</span>
                   </Link>
                   <button
                     onClick={handleLogout}
