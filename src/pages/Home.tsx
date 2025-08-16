@@ -20,6 +20,28 @@ const Home: React.FC = () => {
   fetchListings();
  }, []);
 
+ const filterListings = () => {
+ if (!Array.isArray(listings)) {
+ setFilteredListings([]);
+ return;
+ }
+ let filtered = listings;
+
+ if (searchTerm) {
+ filtered = filtered.filter(listing =>
+  listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  listing.location.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  listing.location.country.toLowerCase().includes(searchTerm.toLowerCase())
+ );
+ }
+
+ if (selectedType) {
+ filtered = filtered.filter(listing => listing.type === selectedType);
+ }
+
+ setFilteredListings(filtered);
+};
+
  useEffect(() => {
   filterListings();
  }, [listings, searchTerm, selectedType]);
@@ -35,23 +57,23 @@ const Home: React.FC = () => {
   }
  };
 
- const filterListings = () => {
-  let filtered = listings;
+//  const filterListings = () => {
+//   let filtered = listings;
 
-  if (searchTerm) {
-   filtered = filtered.filter(listing =>
-    listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    listing.location.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    listing.location.country.toLowerCase().includes(searchTerm.toLowerCase())
-   );
-  }
+//   if (searchTerm) {
+//    filtered = filtered.filter(listing =>
+//     listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//     listing.location.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//     listing.location.country.toLowerCase().includes(searchTerm.toLowerCase())
+//    );
+//   }
 
-  if (selectedType) {
-   filtered = filtered.filter(listing => listing.type === selectedType);
-  }
+//   if (selectedType) {
+//    filtered = filtered.filter(listing => listing.type === selectedType);
+//   }
 
-  setFilteredListings(filtered);
- };
+//   setFilteredListings(filtered);
+//  };
 
  return (
   <div className="min-h-screen bg-gray-50">
@@ -93,7 +115,7 @@ const Home: React.FC = () => {
         </select>
 
                 {/* Conditional Bookings Button */}
-                {user && user.role !== 'host' && (
+                {user && user.role == 'user' && (
                     <Link
                         to="/bookings" // This route needs to be created
                         className="w-full md:w-auto px-6 py-3 bg-primary-600 text-white rounded-lg shadow hover:bg-primary-700 transition-colors duration-200 text-center"
