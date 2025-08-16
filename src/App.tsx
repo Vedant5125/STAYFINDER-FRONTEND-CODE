@@ -16,6 +16,11 @@ import AddListing from './pages/Host/AddListing';
 import BookingsPage from './pages/BookingPage'; 
 import UpdateProfilePage from './pages/UpdateProfilePage';
 import EditListingPage from './pages/EditListingPage';
+import About from './pages/About';
+import Contact from './pages/Contact';
+import Help from './pages/Help';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 
 function App() {
   return (
@@ -65,6 +70,11 @@ function App() {
                 </ProtectedRoute>
               }
             />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           </Routes>
         </Layout>
         

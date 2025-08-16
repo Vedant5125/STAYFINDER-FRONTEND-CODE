@@ -250,6 +250,28 @@ const ListingDetail: React.FC = () => {
                 <h3 className="font-medium text-gray-900 mb-2">Description</h3>
                 <p className="text-gray-600 leading-relaxed">{listing.description}</p>
               </div>
+
+              {/* <div className="flex items-center col-span-2">
+                  <span className="font-medium text-gray-900">Host ID:</span>
+                  <span className="ml-2 text-gray-600">{listing.host._id}</span>
+              </div>
+              <div className="flex items-center col-span-2">
+                  <span className="font-medium text-gray-900">Host name:</span>
+                  <span className="ml-2 text-gray-600">{listing.host.fullname}</span>
+              </div> */}
+              <div className="border-t border-gray-200 mt-6 pt-6">
+                <div className="flex flex-col space-y-2">
+                  <div className="flex items-center">
+                      <span className="font-medium text-gray-900">Host ID:</span>
+                      <span className="ml-2 text-gray-600">{listing.host._id}</span>
+                  </div>
+                  <div className="flex items-center">
+                      <span className="font-medium text-gray-900">Host name:</span>
+                      <span className="ml-2 text-gray-600">{listing.host.fullname}</span>
+                  </div>
+                </div>
+              </div>
+              
             </div>
           </div>
 

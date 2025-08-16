@@ -18,7 +18,10 @@ export interface Location {
 
 export interface Listing {
   _id: string;
-  host: string;
+  host: {
+    _id: string;
+    fullname: string;
+  }
   title: string;
   description: string;
   price: number;
